@@ -19,13 +19,36 @@ class MainActivity : AppCompatActivity() {
 
         //saveTodo1()
         //saveTodo2()
-        queryTodos()
+        //queryTodos()
         //queryTodos2()
-        //uptadeTodo()
+        //updateTodo()
         //deleteTodo()
         //observe()
         //saveTodo3()
+
+        //saveTodoexample("internetsiz merhaba", Priority.LOW)
+        //queryTodoContains("in")
+
+        //queryTodos()
+
     }
+
+
+
+    fun saveTodoexample(name : String, selected : Priority)
+    {
+        val item = Todo.builder()
+            .name(name)
+            .priority(selected)
+            .build()
+
+            Amplify.DataStore.save(item,
+                { Log.i("Tutorial", "Saved item: ${item.name}") },
+                { Log.e("Tutorial", "Could not save item to DataStore", it) })
+
+    }
+    
+
 
     fun saveTodo1()
     {
@@ -45,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         val offsetSeconds = TimeUnit.MILLISECONDS.toSeconds(offsetMillis).toInt()
         val temporalDateTime = Temporal.DateTime(date, offsetSeconds)
         val item = Todo.builder()
-            .name("Finish Quarterly Taxes")
+            .name("Merhaba a!")
             .priority(Priority.HIGH)
             .completedAt(temporalDateTime)
             .build()
@@ -104,7 +127,24 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun uptadeTodo()
+    fun queryTodoContains(contain : String)
+    {
+        Amplify.DataStore.query(
+            Todo::class.java, Where.matches(Todo.NAME.contains(contain)),
+            { todos ->
+                while (todos.hasNext()) {
+                    val todo: Todo = todos.next()
+                    Log.i("Tutorial", "==== Todo ====")
+                    Log.i("Tutorial", "Priority: ${todo.priority}")
+                    todo.name?.let { todoName -> Log.i("Tutorial", "Name: $todoName") }
+                    todo.completedAt?.let { todoCompletedAt -> Log.i("Tutorial", "CompletedAt: $todoCompletedAt") }
+                }
+            },
+            { failure -> Log.e("Tutorial", "Could not query DataStore", failure) }
+        )
+    }
+
+    fun updateTodo()
     {
         Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq("Finish quarterly taxes")),
             { matches ->
@@ -125,7 +165,7 @@ class MainActivity : AppCompatActivity() {
 
     fun deleteTodo()
     {
-        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq("Finish quarterly taxes")),
+        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq("Finish quarterly tax")),
             { matches ->
                 if (matches.hasNext()) {
                     val toDeleteTodo = matches.next()

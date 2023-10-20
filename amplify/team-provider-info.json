@@ -14,7 +14,23 @@
     "categories": {
       "api": {
         "todoappandroid": {}
+      },
+      "auth": {
+        "TodoAppAndroid": {}
       }
+    }
+  },
+  "ui": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-todoappandroid-ui-134333-authRole",
+      "UnauthRoleArn": "arn:aws:iam::723092231001:role/amplify-todoappandroid-ui-134333-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::723092231001:role/amplify-todoappandroid-ui-134333-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-todoappandroid-ui-134333-deployment",
+      "UnauthRoleName": "amplify-todoappandroid-ui-134333-unauthRole",
+      "StackName": "amplify-todoappandroid-ui-134333",
+      "StackId": "arn:aws:cloudformation:us-east-1:723092231001:stack/amplify-todoappandroid-ui-134333/3d97cf00-6da3-11ee-8de7-0a5524cb1807",
+      "AmplifyAppId": "d1ojcufjixtob7"
     }
   }
 }

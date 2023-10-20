@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -74,4 +75,6 @@ dependencies {
 
     // Support for Java 8 features
     coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.3")
+    implementation ("androidx.compose.material3:material3:1.1.2")
+
 }

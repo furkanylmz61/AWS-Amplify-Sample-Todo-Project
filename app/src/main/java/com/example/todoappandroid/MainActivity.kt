@@ -3,6 +3,7 @@ package com.example.todoappandroid
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.updateTransition
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.query.Where
 import com.amplifyframework.core.model.temporal.Temporal
@@ -11,26 +12,18 @@ import com.amplifyframework.datastore.generated.model.Todo
 import java.util.Date
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-        //saveTodo1()
+        //queryTodoContains("ali")
+        //updateTodo("ali", "ayse")
+        //queryTodoContains("ayse")
         //saveTodo2()
-        //queryTodos()
-        //queryTodos2()
-        //updateTodo()
-        //deleteTodo()
-        //observe()
-        //saveTodo3()
-
-        //saveTodoexample("internetsiz merhaba", Priority.LOW)
-        //queryTodoContains("in")
-
-        //queryTodos()
-
+        queryTodoContains("veli")
     }
 
 
@@ -61,15 +54,15 @@ class MainActivity : AppCompatActivity() {
             { Log.i("Tutorial", "Saved item: ${item.name}") },
             { Log.e("Tutorial", "Could not save item to DataStore", it) })
     }
-    fun saveTodo2()
+    fun saveTodo2(name : String, priority: Priority)
     {
         val date = Date()
         val offsetMillis = TimeZone.getDefault().getOffset(date.time).toLong()
         val offsetSeconds = TimeUnit.MILLISECONDS.toSeconds(offsetMillis).toInt()
         val temporalDateTime = Temporal.DateTime(date, offsetSeconds)
         val item = Todo.builder()
-            .name("Merhaba a!")
-            .priority(Priority.HIGH)
+            .name(name)
+            .priority(priority)
             .completedAt(temporalDateTime)
             .build()
 
@@ -136,6 +129,7 @@ class MainActivity : AppCompatActivity() {
                     val todo: Todo = todos.next()
                     Log.i("Tutorial", "==== Todo ====")
                     Log.i("Tutorial", "Priority: ${todo.priority}")
+                    //Log.i("Tutorial", "C")
                     todo.name?.let { todoName -> Log.i("Tutorial", "Name: $todoName") }
                     todo.completedAt?.let { todoCompletedAt -> Log.i("Tutorial", "CompletedAt: $todoCompletedAt") }
                 }
@@ -144,14 +138,14 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun updateTodo()
+    fun updateTodo(existingName : String, changeTo: String )
     {
-        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq("Finish quarterly taxes")),
+        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq(existingName)),
             { matches ->
                 if (matches.hasNext()) {
                     val todo = matches.next()
                     val updatedTodo = todo.copyOfBuilder()
-                        .name("File quarterly taxes")
+                        .name(changeTo)
                         .build()
                     Amplify.DataStore.save(updatedTodo,
                         { Log.i("Tutorial", "Updated item: ${updatedTodo.name}") },

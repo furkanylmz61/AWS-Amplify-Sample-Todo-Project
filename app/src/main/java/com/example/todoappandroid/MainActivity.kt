@@ -2,28 +2,77 @@ package com.example.todoappandroid
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.updateTransition
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.query.Where
 import com.amplifyframework.core.model.temporal.Temporal
 import com.amplifyframework.datastore.generated.model.Priority
 import com.amplifyframework.datastore.generated.model.Todo
+import com.example.todoappandroid.databinding.MainActivityBinding
 import java.util.Date
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: MainActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = MainActivityBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        setContentView(binding.root)
 
-        //queryTodoContains("ali")
+        //queryTodoContains("a")
         //updateTodo("ali", "ayse")
         //queryTodoContains("ayse")
-        //saveTodo2()
-        queryTodoContains("veli")
+
+        //queryTodoContains("veli")
+
+        //deleteTodo("Furkan")
+
+    }
+
+    fun kaydetButton(view: View){
+        val name = binding.editTextText.text.toString()
+        if (name == "")
+        {
+            Toast.makeText(applicationContext,"Lutfen bir deger giriniz!!",Toast.LENGTH_LONG).show()
+        }
+        else
+        {
+            saveTodo2(name,Priority.HIGH)
+        }
+    }
+
+    fun UpdateButton(view: View){
+
+        val name = binding.editTextText.text.toString()
+        val updatedName = binding.editTextText2.text.toString()
+        if (name == "" || updatedName == "")
+        {
+            Toast.makeText(applicationContext,"Lutfen gecerli bir deger giriniz!!", Toast.LENGTH_LONG).show()
+        }
+        else
+        {
+            updateTodo(name,updatedName)
+        }
+    }
+
+    fun DeleteButton(view: View)
+    {
+        val name = binding.editTextText.text.toString()
+        if (name == "")
+        {
+            Toast.makeText(applicationContext,"Isım bos olamaz!!",Toast.LENGTH_LONG).show()
+        }
+        else
+        {
+            deleteTodo(name)
+        }
+    }
+
+    fun queryEmulator(view: View){
+        binding.textView2.text = queryTodos().toString()
     }
 
 
@@ -157,9 +206,9 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun deleteTodo()
+    fun deleteTodo(name: String)
     {
-        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq("Finish quarterly tax")),
+        Amplify.DataStore.query(Todo::class.java, Where.matches(Todo.NAME.eq(name)),
             { matches ->
                 if (matches.hasNext()) {
                     val toDeleteTodo = matches.next()

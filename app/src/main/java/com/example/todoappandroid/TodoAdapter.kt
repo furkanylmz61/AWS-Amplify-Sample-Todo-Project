@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amplifyframework.datastore.generated.model.Todo
 
@@ -43,5 +44,12 @@ class TodoAdapter(val todoList: ArrayList<Todo>) : RecyclerView.Adapter<TodoAdap
             notifyDataSetChanged()
         }
 
+    fun updateTodoList(newList: List<Todo>) {
+        val diffCallback = TodoDiffCallback(todoList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        todoList.clear()
+        todoList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     }

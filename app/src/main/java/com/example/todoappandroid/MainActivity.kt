@@ -1,6 +1,8 @@
 package com.example.todoappandroid
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
     private lateinit var todoAdapter: TodoAdapter
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = MainActivityBinding.inflate(layoutInflater)
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         observe()
+        updateRecyclerView()
 
     }
 
@@ -87,12 +91,14 @@ class MainActivity : AppCompatActivity() {
         Amplify.DataStore.query(
             Todo::class.java,
             { todos ->
-                todoAdapter.todoList.clear()
+                val newTodoList = mutableListOf<Todo>()
                 while (todos.hasNext()) {
-                    todoAdapter.addTodoFirst(todos.next())
+                    newTodoList.add(todos.next())
                 }
+
+                newTodoList.reverse()
                 runOnUiThread {
-                    todoAdapter.notifyDataSetChanged()
+                    todoAdapter.updateTodoList(newTodoList)
                 }
             },
             { error ->
@@ -187,7 +193,7 @@ class MainActivity : AppCompatActivity() {
             Todo::class.java,
             { Log.i("Tutorial", "Observation began") },
             { item ->
-                runOnUiThread {
+                handler.post {
                     updateRecyclerView()
                 }
             },

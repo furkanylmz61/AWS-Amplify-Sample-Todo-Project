@@ -40,17 +40,19 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="400dp"
-        android:layout_height="58dp"
+        android:layout_width="408dp"
+        android:layout_height="64dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="173dp"
+        android:layout_marginTop="226dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="46dp"
+        android:layout_marginBottom="59dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintBottom_toTopOf="@+id/recylclerView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <Button
             android:id="@+id/saveButton"
@@ -79,14 +81,28 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="369dp"
-        android:layout_height="148dp"
+        android:layout_width="254dp"
+        android:layout_height="36dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="16dp"
         android:text="LISTE"
         android:textAlignment="center"
         android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.083" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recylclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

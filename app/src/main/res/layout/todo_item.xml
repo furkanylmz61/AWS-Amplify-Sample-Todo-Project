@@ -1,0 +1,15 @@
+<!-- todo_item.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/todoNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Todo Name" />
+
+    <!-- Diğer verilerinizi buraya ekleyebilirsiniz -->
+</LinearLayout>

@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.query.Where
 import com.amplifyframework.core.model.temporal.Temporal
@@ -17,20 +19,24 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
+    private lateinit var todoAdapter: TodoAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = MainActivityBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //queryTodoContains("a")
-        //updateTodo("ali", "ayse")
-        //queryTodoContains("ayse")
 
-        //queryTodoContains("veli")
+        val recyclerView = findViewById<RecyclerView>(R.id.recylclerView)
+        todoAdapter = TodoAdapter(ArrayList())
+        recyclerView.adapter = todoAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        //deleteTodo("Furkan")
+        observe()
 
     }
+
+
 
     fun kaydetButton(view: View){
         val name = binding.editTextText.text.toString()
@@ -41,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         else
         {
             saveTodo2(name,Priority.HIGH)
+            updateRecyclerView()
+
         }
     }
 
@@ -55,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         else
         {
             updateTodo(name,updatedName)
+            updateRecyclerView()
         }
     }
 
@@ -68,41 +77,34 @@ class MainActivity : AppCompatActivity() {
         else
         {
             deleteTodo(name)
+            updateRecyclerView()
         }
     }
 
-    fun queryEmulator(view: View){
-        binding.textView2.text = queryTodos().toString()
+
+
+    fun updateRecyclerView() {
+        Amplify.DataStore.query(
+            Todo::class.java,
+            { todos ->
+                todoAdapter.todoList.clear()
+                while (todos.hasNext()) {
+                    todoAdapter.addTodoFirst(todos.next())
+                }
+                runOnUiThread {
+                    todoAdapter.notifyDataSetChanged()
+                }
+            },
+            { error ->
+                Log.e("Tutorial", "Veri sorgulanırken hata oluştu", error)
+            }
+        )
     }
 
 
 
-    fun saveTodoexample(name : String, selected : Priority)
-    {
-        val item = Todo.builder()
-            .name(name)
-            .priority(selected)
-            .build()
-
-            Amplify.DataStore.save(item,
-                { Log.i("Tutorial", "Saved item: ${item.name}") },
-                { Log.e("Tutorial", "Could not save item to DataStore", it) })
-
-    }
-    
 
 
-    fun saveTodo1()
-    {
-        val item = Todo.builder()
-            .name("Build Android Application")
-            .priority(Priority.NORMAL)
-            .build()
-
-        Amplify.DataStore.save(item,
-            { Log.i("Tutorial", "Saved item: ${item.name}") },
-            { Log.e("Tutorial", "Could not save item to DataStore", it) })
-    }
     fun saveTodo2(name : String, priority: Priority)
     {
         val date = Date()
@@ -120,25 +122,14 @@ class MainActivity : AppCompatActivity() {
             { Log.e("Tutorial", "Could not save item to DataStore", it) })
     }
 
-    fun saveTodo3()
-    {
-        val item: Todo = Todo.builder()
-            .name("Lorem ipsum dolor sit amet")
-            .priority(Priority.LOW)
-            .completedAt(Temporal.DateTime("1970-01-01T12:30:23.999Z"))
-            .build()
-        Amplify.DataStore.save(
-            item,
-            { success -> Log.i("Amplify", "Saved item: " + success.item().name) },
-            { error -> Log.e("Amplify", "Could not save item to DataStore", error) }
-        )
-    }
 
-    fun queryTodos()
+    /*fun queryTodos(): MutableLiveData<String>
     {
+        val result = MutableLiveData<String>()
         Amplify.DataStore.query(Todo::class.java,
             {
                 todos ->
+                val resultText = StringBuilder()
                 while (todos.hasNext()){
                     val todo : Todo = todos.next()
                     Log.i("Tutorial", "==== Todo ====")
@@ -146,46 +137,15 @@ class MainActivity : AppCompatActivity() {
                     todo.priority?.let { todoPriority -> Log.i("Tutorial", "Priority: $todoPriority") }
                     todo.completedAt?.let { todoCompletedAt -> Log.i("Tutorial", "CompletedAt: $todoCompletedAt") }
                 }
-
+                result.postValue(resultText.toString())
             },
             { Log.e("Tutorial", "Could not query DataStore", it)  }
         )
+        return result
     }
 
-    fun queryTodos2()
-    {
-        Amplify.DataStore.query(
-            Todo::class.java, Where.matches(Todo.PRIORITY.eq(Priority.HIGH)),
-            { todos ->
-                while (todos.hasNext()) {
-                    val todo: Todo = todos.next()
-                    Log.i("Tutorial", "==== Todo ====")
-                    Log.i("Tutorial", "Name: ${todo.name}")
-                    todo.priority?.let { todoPriority -> Log.i("Tutorial", "Priority: $todoPriority") }
-                    todo.completedAt?.let { todoCompletedAt -> Log.i("Tutorial", "CompletedAt: $todoCompletedAt") }
-                }
-            },
-            { failure -> Log.e("Tutorial", "Could not query DataStore", failure) }
-        )
-    }
+     */
 
-    fun queryTodoContains(contain : String)
-    {
-        Amplify.DataStore.query(
-            Todo::class.java, Where.matches(Todo.NAME.contains(contain)),
-            { todos ->
-                while (todos.hasNext()) {
-                    val todo: Todo = todos.next()
-                    Log.i("Tutorial", "==== Todo ====")
-                    Log.i("Tutorial", "Priority: ${todo.priority}")
-                    //Log.i("Tutorial", "C")
-                    todo.name?.let { todoName -> Log.i("Tutorial", "Name: $todoName") }
-                    todo.completedAt?.let { todoCompletedAt -> Log.i("Tutorial", "CompletedAt: $todoCompletedAt") }
-                }
-            },
-            { failure -> Log.e("Tutorial", "Could not query DataStore", failure) }
-        )
-    }
 
     fun updateTodo(existingName : String, changeTo: String )
     {
@@ -222,13 +182,14 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun observe()
-    {
-        Amplify.DataStore.observe(Todo::class.java,
+    fun observe() {
+        Amplify.DataStore.observe(
+            Todo::class.java,
             { Log.i("Tutorial", "Observation began") },
-            {
-                val todo = it.item()
-                Log.i("Tutorial", "Todo: $todo")
+            { item ->
+                runOnUiThread {
+                    updateRecyclerView()
+                }
             },
             { Log.e("Tutorial", "Observation failed", it) },
             { Log.i("Tutorial", "Observation complete") }

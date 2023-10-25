@@ -78,4 +78,7 @@ dependencies {
     coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.3")
     implementation ("androidx.compose.material3:material3:1.1.2")
 
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+
+
 }

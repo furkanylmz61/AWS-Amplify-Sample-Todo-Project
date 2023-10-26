@@ -15,7 +15,7 @@ To run the application on your local machine, follow these steps:
 2. Navigate to the project folder:
 
    ```bash
-   cd to-do-app
+   cd AWS-Amplify-Sample-Todo-Project
    ```
 
 3. Install the required dependencies:
